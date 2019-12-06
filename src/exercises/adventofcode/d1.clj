@@ -1,46 +1,38 @@
 (ns exercises.adventofcode.d1
-  (:gen-class))
-
-(def d1_file "src/exercises/adventofcode/d1.txt")
-
-(defn read_file [file_name]
-  (with-open [rdr (clojure.java.io/reader file_name)]
-    (reduce conj [] (line-seq rdr))))
+  (:require [exercises.adventofcode.io :as aoc-io]
+            [exercises.adventofcode.validation :as aoc-validation]))
 
 
-(defn calculate_fuel [mass]
-  (-> mass
-      (/ ,,, 3)
-      (Math/floor ,,,)
-      (- ,,, 2)))
+(defn calculate-fuel [mass]
+  (as-> mass it
+        (/ it 3)
+        (Math/floor it)
+        (- it 2)))
 
-(defn calculate_fuel_recur [mass]
-  (loop [total_amount 0, remaining_weight mass]
-    (let [fuel_weight (calculate_fuel remaining_weight)]
-      (if (<= fuel_weight 0)
-        total_amount
-        (recur (+ total_amount fuel_weight) fuel_weight)))))
-
-
-(defn parse_string_to_int_and_apply [mass_as_string fn]
-  (as-> mass_as_string mass
-        (Integer/parseInt (re-find #"\A-?\d+" mass))
-        (fn mass)))
+(defn calculate-fuel-recur [mass]
+  (loop [total-amount 0, remaining-weight mass]
+    (let [fuel-weight (calculate-fuel remaining-weight)]
+      (if (<= fuel-weight 0)
+        total-amount
+        (recur (+ total-amount fuel-weight) fuel-weight)))))
 
 
-(defn calculate_result_with_fn [file fn]
-  (->> (read_file file)
-       (map #(parse_string_to_int_and_apply %1 fn) ,,,)
-       (reduce + ,,,)
-       (int ,,,)))
+(defn parse-string-to-int-and-apply [mass-as-string fn]
+  (as-> mass-as-string it
+        (Integer/parseInt (re-find #"\A-?\d+" it))
+        (fn it)))
+
+(defn calculate-result-with-fn [file fn]
+  (as-> file it
+        (aoc-io/day-1-input-from-file it)
+        (map #(parse-string-to-int-and-apply %1 fn) it)
+        (reduce + it)
+        (int it)))
+
+(defn evaluate-d1s1 []
+  (calculate-result-with-fn (aoc-io/day-file 1) calculate-fuel))
+(defn evaluate-d1s2 []
+  (calculate-result-with-fn (aoc-io/day-file 1) calculate-fuel-recur))
 
 
-(def d1s1_result (calculate_result_with_fn d1_file calculate_fuel))
-(def d1s2_result (calculate_result_with_fn d1_file calculate_fuel_recur))
-
-(def validate_result
-  (if (and
-        (= d1s1_result 3442987)
-        (= d1s2_result 5161601))
-    (println "SUCCESS - CODE WORKS")
-    (println "FAILURE - CODE DOESN'T WORK")))
+(aoc-validation/validate-result-day1 (evaluate-d1s1) (evaluate-d1s2))

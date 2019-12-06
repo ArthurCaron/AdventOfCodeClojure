@@ -1,4 +1,4 @@
-(ns exercises.adventofcode.d3
+(ns exercises.adventofcode.d3tambouille
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]))
 
@@ -17,12 +17,15 @@
     direction))
 
 (defn calc-new-point [move-action result]
-  (move-action (:last result)))
+  (let [last (:last result)]
+    (assoc last :distance (inc (:distance last)),
+                :coords (move-action (:coords last)))))
+;(move-action (:last result)))
 
 (defn calc-new-result [result]
   (conj (:result result) (:last result)))
 
-(defn calc-points [direction previous-result -]
+(defn calc-points [direction previous-result _]
   (let [partial-calc-new-point (partial calc-new-point (move direction))]
     {:last   (partial-calc-new-point previous-result)
      :result (calc-new-result previous-result)}))
@@ -34,22 +37,23 @@
     (range amount)))
 
 (defn key-points-from-move-action [wire]
-  (as-> (reduce points-from-move-action {:last [0 0] :result []} wire) result
+  (as-> (reduce points-from-move-action {:last {:distance 0, :coords [0,0]} :result []} wire) result
         (calc-new-result result)
-        (rest result)
-        (into #{} result)))
+        (rest result)))
 
 (defn get-intersections [wires]
-  (as-> wires it
-        (map key-points-from-move-action it)
-        (apply clojure.set/intersection it)))
+  (let [key-points (map key-points-from-move-action wires)
+        key-points-as-set (map (partial into #{}) (map (fn [points] (map #(:coords %) points)) key-points))]
+    {:key-points key-points,
+     :intersections (apply clojure.set/intersection key-points-as-set)}))
 
-(defn intersection-to-manhattan [intersections]
-  (map
-    (fn [intersection]
-      {:intersection intersection,
-       :manhattan    (manhattan-distance intersection)})
-    intersections))
+(defn intersections-to-manhattan [wires]
+  (assoc wires :intersections
+               (map
+                 (fn [intersection]
+                   {:intersection intersection,
+                    :manhattan    (manhattan-distance intersection)})
+                 (:intersections wires))))
 
 (defn find-lowest-distance [manhattan-intersections]
   (if (= (count manhattan-intersections) 1)
@@ -62,16 +66,46 @@
   (as-> file it
         (aoc-io/day-3-input-from-file it)
         (get-intersections it)
-        (intersection-to-manhattan it)
+        (intersections-to-manhattan it)
+        (:intersections it)
         (find-lowest-distance it)
-        (:manhattan it)))
+        (:manhattan it)
+        ))
 
 (defn evaluate-d3s2 [wires]
   (as-> wires it
         (get-intersections it)
-        (intersection-to-manhattan it)
-        (find-lowest-distance it)
-        (:manhattan it)))
+        ;(intersections-to-manhattan it)
+        ;(:intersections it)
+        ;(find-lowest-distance it)
+        ;(:manhattan it)
+        ))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (defn evaluate-from-file-2 [file]
   (-> file
@@ -106,6 +140,11 @@
 
 
 (def d3s1-result (evaluate-d3s1 (aoc-io/day-file 3)))
+(def validate-result-day3
+  (if (= d3s1-result 2180)
+    (println "SUCCESS - CODE WORKS")
+    (println "FAILURE - CODE DOESN'T WORK")))
+
 (def d3s2-result (evaluate-from-file-2 (aoc-io/day-file 3)))
 
 (aoc-validation/validate-result-day3 d3s1-result d3s2-result)

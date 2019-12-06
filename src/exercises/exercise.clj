@@ -120,12 +120,4 @@
 
 
 (defn all-tests []
-  (no-matches)
-  (detect-simple-anagram)
-  (does-not-confuse-different-duplicates)
-  (eliminate-anagram-subsets)
-  (detect-anagram)
-  (multiple-anagrams)
-  (case-insensitive-anagrams)
-  (word-is-not-own-anagram)
-  (capital-word-is-not-own-anagram))
+  (run-tests))
