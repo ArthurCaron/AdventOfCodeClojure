@@ -1,25 +1,24 @@
 (ns exercises.adventofcode.validation)
 
-; Day 1
-(defn validate-result-day1 [d1s1-result d1s2-result]
+(defn validate [s1-result s1-expected s2-result s2-expected]
   (if (and
-        (= d1s1-result 3442987)
-        (= d1s2-result 5161601))
+        (= s1-result s1-expected)
+        (= s2-result s2-expected))
     (println "SUCCESS - CODE WORKS")
     (println "FAILURE - CODE DOESN'T WORK")))
+
+; Day 1
+(defn validate-result-day1 [s1-result s2-result]
+  (validate s1-result 3442987 s2-result 5161601))
 
 ; Day 2
-(defn validate-result-day2 [d2s1-result d2s2-result]
-  (if (and
-        (= d2s1-result 4462686)
-        (= d2s2-result 5936))
-    (println "SUCCESS - CODE WORKS")
-    (println "FAILURE - CODE DOESN'T WORK")))
+(defn validate-result-day2 [s1-result s2-result]
+  (validate s1-result 4462686 s2-result 5936))
 
 ; Day 3
-(defn validate-result-day3 [d3s1-result d3s2-result]
-  (if (and
-        (= d3s1-result 2180)
-        (= d3s2-result 2180))
-    (println "SUCCESS - CODE WORKS")
-    (println "FAILURE - CODE DOESN'T WORK")))
+(defn validate-result-day3 [s1-result s2-result]
+  (validate s1-result 2180 s2-result 112316))
+
+; Day 4
+(defn validate-result-day4 [s1-result s2-result]
+  (validate s1-result 0 s2-result 0))

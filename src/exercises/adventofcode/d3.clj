@@ -76,8 +76,12 @@
     wires))
 
 
-(defn evaluate-d3s1 [wires]
-  (as-> wires it
+(defn file->wires [file]
+  (aoc-io/day-3-input-from-file file))
+
+(defn- evaluate-s1 [file]
+  (as-> file it
+        (file->wires it)
         (map key-points-from-move-action it)
         (map set it)
         (get-intersections it)
@@ -85,8 +89,9 @@
         (find-lowest-distance it)
         (:manhattan it)))
 
-(defn evaluate-d3s2 [wires]
-  (let [key-points (map key-points-from-move-action wires)
+(defn- evaluate-s2 [file]
+  (let [wires (file->wires file)
+        key-points (map key-points-from-move-action wires)
         intersections (get-intersections (map set key-points))
         partial-wires-distance-to-intersection (partial wires-distance-to-intersection key-points)]
     (as-> (map partial-wires-distance-to-intersection intersections) it
@@ -94,10 +99,6 @@
           (:manhattan it))))
 
 
-(defn file->wires [file]
-  (aoc-io/day-3-input-from-file file))
-
-(def d3s1-result (evaluate-d3s1 (file->wires (aoc-io/day-file 3))))
-(def d3s2-result (evaluate-d3s2 (file->wires (aoc-io/day-file 3))))
-
-(aoc-validation/validate-result-day3 d3s1-result d3s2-result)
+(aoc-validation/validate-result-day3
+  (evaluate-s1 (aoc-io/day-file 3))
+  (evaluate-s2 (aoc-io/day-file 3)))

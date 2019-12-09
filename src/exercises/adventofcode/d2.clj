@@ -65,10 +65,13 @@
     (+ (* (:noun result) 100) (:verb result))))
 
 
-(defn evaluate-d2s1 []
-  (calculate-simple-result (aoc-io/day-file 2) 12 2))
-(defn evaluate-d2s2 []
-  (calculate-complex-result (aoc-io/day-file 2) 19690720))
+(defn- evaluate-s1 [file]
+  (calculate-simple-result file 12 2))
 
-(aoc-validation/validate-result-day2 (evaluate-d2s1) (evaluate-d2s2))
+(defn- evaluate-s2 [file]
+  (calculate-complex-result file 19690720))
+
+(aoc-validation/validate-result-day2
+  (evaluate-s1 (aoc-io/day-file 2))
+  (evaluate-s2 (aoc-io/day-file 2)))
 

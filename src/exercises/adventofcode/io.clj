@@ -50,8 +50,3 @@
         (map split-by-comma it)
         (map parse-wire it)
         (into [] it)))
-
-(defn day-3-input-from-code [str-list-1, str-list-2]
-  (let [parse-input (fn [input] (map parse (split-by-comma input)))]
-    [(parse-input str-list-1)
-     (parse-input str-list-2)]))

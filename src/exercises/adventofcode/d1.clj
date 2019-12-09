@@ -29,10 +29,14 @@
         (reduce + it)
         (int it)))
 
-(defn evaluate-d1s1 []
-  (calculate-result-with-fn (aoc-io/day-file 1) calculate-fuel))
-(defn evaluate-d1s2 []
-  (calculate-result-with-fn (aoc-io/day-file 1) calculate-fuel-recur))
+
+(defn- evaluate-s1 [file]
+  (calculate-result-with-fn file calculate-fuel))
+
+(defn- evaluate-s2 [file]
+  (calculate-result-with-fn file calculate-fuel-recur))
 
 
-(aoc-validation/validate-result-day1 (evaluate-d1s1) (evaluate-d1s2))
+(aoc-validation/validate-result-day1
+  (evaluate-s1 (aoc-io/day-file 1))
+  (evaluate-s2 (aoc-io/day-file 1)))
