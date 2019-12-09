@@ -29,56 +29,41 @@
     digits))
 
 (defn filter-never-decrease [numbers]
-  (filter (partial filter-never-decrease-digits) numbers)
-  )
+  (filter (partial filter-never-decrease-digits) numbers))
 
 
+(defn filter-adjacent-identical-digits [expected-count digits]
+  (loop [[current-digit & remaining] digits
+         count 1]
+    (if (empty? remaining)
+      false
+      (let [new-count (if (= current-digit (first remaining))
+                        (inc count)
+                        1)]
+        (if (= new-count expected-count)
+          true
+          (recur remaining new-count))))))
 
-(defn- filter-two-adjacent-digits-identical-digits [digits]
-  (not
-    (reduce
-    (fn [digit1 digit2]
-      (if (= digit1 digit2)
-        (reduced false)
-        digit2))
-    digits)))
+(defn filter-adjacent-identical [expected-count numbers]
+  (filter (partial filter-adjacent-identical-digits expected-count) numbers))
 
-(defn filter-two-adjacent-digits-identical [numbers]
-  (filter (partial filter-two-adjacent-digits-identical-digits) numbers)
-  )
+(defn filter-adjacent-identical-digits-only-two [digits]
+  (loop [[current-digit & remaining] digits
+         count 1]
+    (if (empty? remaining)
+      (if (= count 2)
+        true
+        false)
+      (let [new-count (if (= current-digit (first remaining))
+                        (inc count)
+                        1)]
+        (if (and (= count 2) (= new-count 1))
+          true
+          (recur remaining new-count))))))
 
+(defn filter-adjacent-identical-only-two [numbers]
+  (filter (partial filter-adjacent-identical-digits-only-two) numbers))
 
-(defn filter-two-adjacent-digits-identical [numbers]
-  (filter (fn [digits]
-            (let [frequencies-digits (frequencies digits)
-                  vals-freq (vals frequencies)]
-              (println frequencies-digits)
-              (println vals-freq)
-
-              )
-
-            ) numbers)
-  )
-
-
-
-(defn digits->string [digits]
-  (apply str digits))
-
-(defn evaluate-test [min max]
-  (as-> [min (inc max)] it
-        (numbers->password-range it)
-        (map number->digits it)
-        (filter-never-decrease it)
-        (filter-two-adjacent-digits-identical it)
-        (map digits->string it)))
-
-(def test1
-  (and
-    (= (first (evaluate-test 111111 111111)) "111111")
-    (= (first (evaluate-test 223450 223450)) nil)
-    (= (first (evaluate-test 123789 123789)) nil)
-    ))
 
 (defn evaluate-s1 [file]
   (as-> file it
@@ -86,10 +71,17 @@
         (numbers->password-range it)
         (map number->digits it)
         (filter-never-decrease it)
-        (filter-two-adjacent-digits-identical it)
+        (filter-adjacent-identical 2 it)
         (count it)))
 
-(defn- evaluate-s2 [file])
+(defn- evaluate-s2 [file]
+  (as-> file it
+        (file->numbers it)
+        (numbers->password-range it)
+        (map number->digits it)
+        (filter-never-decrease it)
+        (filter-adjacent-identical-only-two it)
+        (count it)))
 
 (aoc-validation/validate-result-day4
   (evaluate-s1 (aoc-io/day-file 4))
