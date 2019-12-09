@@ -37,7 +37,7 @@
 
 (defn calculate-simple-result [file noun verb] "Star 1"
   (as-> file it
-        (aoc-io/day-2-input-from-file it)
+        (aoc-io/day-2-input-from-file! it)
         (evaluate-memory it noun verb)
         (nth it 0)))
 
@@ -48,7 +48,7 @@
   (= value 99))
 
 (defn loop-on-noun-and-verb [file expected]
-  (let [memory (aoc-io/day-2-input-from-file file)]
+  (let [memory (aoc-io/day-2-input-from-file! file)]
     (loop [noun 0, verb 0]
       (as-> memory current-memory
             (evaluate-memory current-memory noun verb)
@@ -71,7 +71,7 @@
 (defn- evaluate-s2 [file]
   (calculate-complex-result file 19690720))
 
-(aoc-validation/validate-result-day2
+(aoc-validation/validate-result-day2!
   (evaluate-s1 (aoc-io/day-file 2))
   (evaluate-s2 (aoc-io/day-file 2)))
 

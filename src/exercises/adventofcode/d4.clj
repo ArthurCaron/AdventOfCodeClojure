@@ -5,7 +5,7 @@
 
 
 (defn file->numbers [file]
-  (aoc-io/day-4-input-from-file file))
+  (aoc-io/day-4-input-from-file! file))
 
 (defn numbers->password-range [[password-min password-max]]
   (range password-min password-max))
@@ -83,6 +83,6 @@
         (filter-adjacent-identical-only-two it)
         (count it)))
 
-(aoc-validation/validate-result-day4
+(aoc-validation/validate-result-day4!
   (evaluate-s1 (aoc-io/day-file 4))
   (evaluate-s2 (aoc-io/day-file 4)))

@@ -3,7 +3,7 @@
 
 (defn day-file [day] (str "src/exercises/adventofcode/d" day ".txt"))
 
-(defn- slurp-file [file-name]
+(defn- slurp-file! [file-name]
   (as-> file-name it
         (slurp it)))
 
@@ -21,18 +21,16 @@
 
 
 ; Day 1
-(defn day-1-input-from-file [file-name]
-  "Day 1"
+(defn day-1-input-from-file! [file-name]
   (as-> file-name it
-        (slurp-file it)
+        (slurp-file! it)
         (split-by-line-return it)
         (into [] it)))
 
 ; Day 2
-(defn day-2-input-from-file [file-name]
-  "Day 2"
+(defn day-2-input-from-file! [file-name]
   (as-> file-name it
-        (slurp-file it)
+        (slurp-file! it)
         (split-by-comma it)
         (map parse-str-to-int it)
         (into [] it)))
@@ -45,20 +43,26 @@
 (defn- parse-wire [wire]
   (map parse wire))
 
-(defn day-3-input-from-file [file-name]
-  "Day 3"
+(defn day-3-input-from-file! [file-name]
   (as-> file-name it
-        (slurp-file it)
+        (slurp-file! it)
         (split-by-line-return it)
         (map split-by-comma it)
         (map parse-wire it)
         (into [] it)))
 
 ; Day 4
-(defn day-4-input-from-file [file-name]
-  "Day 4"
+(defn day-4-input-from-file! [file-name]
   (as-> file-name it
-        (slurp-file it)
+        (slurp-file! it)
         (split-by-dash it)
+        (map parse-str-to-int it)
+        (into [] it)))
+
+; Day 5
+(defn day-5-input-from-file! [file-name]
+  (as-> file-name it
+        (slurp-file! it)
+        (split-by-comma it)
         (map parse-str-to-int it)
         (into [] it)))

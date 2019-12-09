@@ -24,7 +24,7 @@
 
 (defn calculate-result-with-fn [file fn]
   (as-> file it
-        (aoc-io/day-1-input-from-file it)
+        (aoc-io/day-1-input-from-file! it)
         (map #(parse-string-to-int-and-apply %1 fn) it)
         (reduce + it)
         (int it)))
@@ -37,6 +37,6 @@
   (calculate-result-with-fn file calculate-fuel-recur))
 
 
-(aoc-validation/validate-result-day1
+(aoc-validation/validate-result-day1!
   (evaluate-s1 (aoc-io/day-file 1))
   (evaluate-s2 (aoc-io/day-file 1)))

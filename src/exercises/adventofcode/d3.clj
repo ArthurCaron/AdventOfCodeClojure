@@ -77,7 +77,7 @@
 
 
 (defn file->wires [file]
-  (aoc-io/day-3-input-from-file file))
+  (aoc-io/day-3-input-from-file! file))
 
 (defn- evaluate-s1 [file]
   (as-> file it
@@ -99,6 +99,6 @@
           (:manhattan it))))
 
 
-(aoc-validation/validate-result-day3
+(aoc-validation/validate-result-day3!
   (evaluate-s1 (aoc-io/day-file 3))
   (evaluate-s2 (aoc-io/day-file 3)))
