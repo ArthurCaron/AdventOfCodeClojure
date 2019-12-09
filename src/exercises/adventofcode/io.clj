@@ -13,6 +13,9 @@
 (defn- split-by-comma [str]
   (str/split str #","))
 
+(defn- split-by-dash [str]
+  (str/split str #"-"))
+
 (defn- parse-str-to-int [str]
   (Integer/parseInt (re-find #"\d+" str)))
 
@@ -49,4 +52,13 @@
         (split-by-line-return it)
         (map split-by-comma it)
         (map parse-wire it)
+        (into [] it)))
+
+; Day 4
+(defn day-4-input-from-file [file-name]
+  "Day 4"
+  (as-> file-name it
+        (slurp-file it)
+        (split-by-dash it)
+        (map parse-str-to-int it)
         (into [] it)))
