@@ -24,3 +24,8 @@
 (defn validate-result-day4 [s1-result s2-result]
   (validate s1-result 2150)
   (validate s2-result 1462))
+
+; Day 5
+(defn validate-result-day5 [s1-result s2-result]
+  (validate s1-result 0)
+  (validate s2-result 0))
