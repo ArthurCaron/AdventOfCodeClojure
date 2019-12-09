@@ -5,9 +5,6 @@
 (defn abs [n] (max n (- n)))
 (defn manhattan-distance [[x y]] (+ (abs x) (abs y)))
 
-; TODO with list of points
-; Also TODO with segments
-
 (defn move [direction]
   (get
     {\U (fn [[x y]] [(inc x) y]),
@@ -34,15 +31,12 @@
     (range amount)))
 
 (defn key-points-from-move-action [wire]
-  (as-> (reduce points-from-move-action {:last [0 0] :result []} wire) result
-        (calc-new-result result)
-        (rest result)
-        (into #{} result)))
+  (as-> (reduce points-from-move-action {:last [0 0] :result []} wire) it
+        (calc-new-result it)
+        (rest it)))
 
 (defn get-intersections [wires]
-  (as-> wires it
-        (map key-points-from-move-action it)
-        (apply clojure.set/intersection it)))
+  (apply clojure.set/intersection wires))
 
 (defn intersection-to-manhattan [intersections]
   (map
@@ -58,54 +52,52 @@
     (fn [val1 val2] (if (< (:manhattan val1) (:manhattan val2)) val1 val2))
     manhattan-intersections))
 
-(defn evaluate-d3s1 [file]
-  (as-> file it
-        (aoc-io/day-3-input-from-file it)
+
+(defn wire-distance-to-intersection [wire intersection]
+  (reduce
+    (fn [distance val1]
+      (if (= val1 intersection)
+        (reduced (inc distance))
+        (inc distance)))
+    0
+    wire))
+
+(defn wires-distance-to-intersection [wires intersection]
+  (reduce
+    (fn [distance-result wire]
+      (assoc
+        distance-result
+        :manhattan
+        (+
+          (:manhattan distance-result)
+          (wire-distance-to-intersection wire intersection))))
+    {:intersection intersection,
+     :manhattan 0}
+    wires))
+
+
+(defn evaluate-d3s1 [wires]
+  (as-> wires it
+        (map key-points-from-move-action it)
+        (map set it)
         (get-intersections it)
         (intersection-to-manhattan it)
         (find-lowest-distance it)
         (:manhattan it)))
 
 (defn evaluate-d3s2 [wires]
-  (as-> wires it
-        (get-intersections it)
-        (intersection-to-manhattan it)
-        (find-lowest-distance it)
-        (:manhattan it)))
-
-(defn evaluate-from-file-2 [file]
-  (-> file
-      (aoc-io/day-3-input-from-file,,,)
-      (evaluate-d3s2,,,)))
-
-(evaluate-d3s2
-  (aoc-io/day-3-input-from-code
-    "R3,U3,L1,D1"
-    "U2,R4"))
-
-(def test1-eval
-  (evaluate-d3s2
-    (aoc-io/day-3-input-from-code
-      "R75,D30,R83,U83,L12,D49,R71,U7,L72"
-      "U62,R66,U55,R34,D71,R55,D58,R83")))
-(def test2-eval
-  (evaluate-d3s2
-    (aoc-io/day-3-input-from-code
-      "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"
-      "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7")))
-
-(def test1
-  (if (= test1-eval 610)
-    (println "SUCCESS - CODE WORKS")
-    (println "FAILURE - CODE DOESN'T WORK")))
-
-(def test2
-  (if (= test2-eval 410)
-    (println "SUCCESS - CODE WORKS")
-    (println "FAILURE - CODE DOESN'T WORK")))
+  (let [key-points (map key-points-from-move-action wires)
+        intersections (get-intersections (map set key-points))
+        partial-wires-distance-to-intersection (partial wires-distance-to-intersection key-points)]
+    (as-> (map partial-wires-distance-to-intersection intersections) it
+          (find-lowest-distance it)
+          (:manhattan it))))
 
 
-(def d3s1-result (evaluate-d3s1 (aoc-io/day-file 3)))
-(def d3s2-result (evaluate-from-file-2 (aoc-io/day-file 3)))
+(defn file->wires [file]
+  (aoc-io/day-3-input-from-file file))
+
+(def d3s1-result (evaluate-d3s1 (file->wires (aoc-io/day-file 3))))
+(def d3s2-result (evaluate-d3s2 (file->wires (aoc-io/day-file 3))))
 
 (aoc-validation/validate-result-day3 d3s1-result d3s2-result)

@@ -20,6 +20,6 @@
 (defn validate-result-day3 [d3s1-result d3s2-result]
   (if (and
         (= d3s1-result 2180)
-        (= d3s2-result 0))
+        (= d3s2-result 2180))
     (println "SUCCESS - CODE WORKS")
     (println "FAILURE - CODE DOESN'T WORK")))
