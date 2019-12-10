@@ -2,47 +2,79 @@
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]))
 
+(defn index->val [{memory :memory instruction-pointer :instruction-pointer} index]
+  (nth memory (+ instruction-pointer index)))
 
-(defn standard [fun memory instruction-pointer] "Standard operation"
-  (let [first-value-index (nth memory (+ instruction-pointer 1))
-        second-value-index (nth memory (+ instruction-pointer 2))
-        final-position (nth memory (+ instruction-pointer 3))
-        value (fun (nth memory first-value-index) (nth memory second-value-index))]
-    (assoc memory final-position value)))
+(defn index->index->val [{memory :memory :as memory-map} index]
+  (nth memory (index->val memory-map index)))
+
+(defn assoc-val [{memory :memory} position value]
+  (assoc memory position value))
+
+(defn assoc-val- [memory position value]
+  (assoc-in memory [:memory position] value))
+
+(defn standard- [fun memory-map] "Standard operation"
+  (assoc-val- memory-map
+             (index->val memory-map 3)
+             (fun
+               (index->index->val memory-map 1)
+               (index->index->val memory-map 2))))
+
+(defn standard [fun memory-map] "Standard operation"
+  (assoc-val memory-map
+             (index->val memory-map 3)
+             (fun
+               (index->index->val memory-map 1)
+               (index->index->val memory-map 2))))
 
 
-(defn get-instruction [op-code] "Define existing instructions"
-  (get
-    {1 #(standard + %1 %2)
-     2 #(standard * %1 %2)}
-    op-code))
+(defn op-code-1 [memory-map]
+  (standard + memory-map))
+(defn op-code-1- [memory-map]
+  (standard- + memory-map))
+
+(defn op-code-2 [memory-map]
+  (standard * memory-map))
+
+
+(defn get-op-code [{memory :memory instruction-pointer :instruction-pointer}]
+  (nth memory instruction-pointer))
+
+(defn jump [{instruction-pointer :instruction-pointer} amount]
+  (+ instruction-pointer amount))
+
+(defn jump- [{instruction-pointer :instruction-pointer :as memory-map} amount]
+  (assoc-in memory-map [:instruction-pointer] (+ instruction-pointer amount)))
+;(+ instruction-pointer amount))
 
 
 (defn evaluate
-  ([memory] "Init with instruction-pointer at the start of memory"
-   (evaluate memory 0))
-  ([memory instruction-pointer] "Finds op-code and iterates or stops"
-   (let [op-code (nth memory instruction-pointer)]
-     (if (= op-code 99)
-       memory
-       (recur ((get-instruction op-code) memory instruction-pointer) (+ instruction-pointer 4))))))
-
+  ([memory-map] "Finds op-code and iterates or stops"
+   (let [op-code (get-op-code memory-map)]
+     (cond
+       (= op-code 99) memory-map
+       (= op-code 1) (recur {:memory (op-code-1 memory-map)
+                             :instruction-pointer (jump memory-map 4)})
+       (= op-code 2) (recur {:memory (op-code-2 memory-map)
+                             :instruction-pointer (jump memory-map 4)})
+       ))))
 
 (defn evaluate-memory [memory noun verb] "Sets noun and verb then evaluates"
-  (as-> memory it
-        (assoc it 1 noun)
-        (assoc it 2 verb)
-        (evaluate it)))
+  (as-> {:memory memory} it
+        (assoc-in it [:memory 1] noun)
+        (assoc-in it [:memory 2] verb)
+        (:memory it)
+        (evaluate {:memory it :instruction-pointer 0})))
 
 
 (defn calculate-simple-result [file noun verb] "Star 1"
-  (as-> file it
-        (aoc-io/day-2-input-from-file! it)
-        (evaluate-memory it noun verb)
-        (nth it 0)))
+  (let [memory (aoc-io/day-2-input-from-file! file)]
+    (as-> (evaluate-memory memory noun verb) it
+          (nth (:memory it) 0))))
 
 (defn found-expected? [memory expected]
-  (= (nth memory 0) expected))
+  (= (nth (:memory memory) 0) expected))
 
 (defn is-max? [value]
   (= value 99))
