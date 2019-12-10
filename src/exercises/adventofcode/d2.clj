@@ -2,24 +2,14 @@
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]))
 
-(defn index->val [{memory :memory instruction-pointer :instruction-pointer} index]
+(defn index->val [{memory :memory, instruction-pointer :instruction-pointer} index]
   (nth memory (+ instruction-pointer index)))
 
-(defn index->index->val [{memory :memory :as memory-map} index]
+(defn index->index->val [{memory :memory, :as memory-map} index]
   (nth memory (index->val memory-map index)))
 
-(defn assoc-val [{memory :memory} position value]
-  (assoc memory position value))
-
-(defn assoc-val- [memory position value]
-  (assoc-in memory [:memory position] value))
-
-(defn standard- [fun memory-map] "Standard operation"
-  (assoc-val- memory-map
-             (index->val memory-map 3)
-             (fun
-               (index->index->val memory-map 1)
-               (index->index->val memory-map 2))))
+(defn assoc-val [memory-map position value]
+  (assoc-in memory-map [:memory position] value))
 
 (defn standard [fun memory-map] "Standard operation"
   (assoc-val memory-map
@@ -29,24 +19,19 @@
                (index->index->val memory-map 2))))
 
 
+(defn jump [amount {instruction-pointer :instruction-pointer, :as memory-map}]
+  (assoc-in memory-map [:instruction-pointer] (+ instruction-pointer amount)))
+
+
 (defn op-code-1 [memory-map]
-  (standard + memory-map))
-(defn op-code-1- [memory-map]
-  (standard- + memory-map))
+  (jump 4 (standard + memory-map)))
 
 (defn op-code-2 [memory-map]
-  (standard * memory-map))
+  (jump 4 (standard * memory-map)))
 
 
-(defn get-op-code [{memory :memory instruction-pointer :instruction-pointer}]
+(defn get-op-code [{memory :memory, instruction-pointer :instruction-pointer}]
   (nth memory instruction-pointer))
-
-(defn jump [{instruction-pointer :instruction-pointer} amount]
-  (+ instruction-pointer amount))
-
-(defn jump- [{instruction-pointer :instruction-pointer :as memory-map} amount]
-  (assoc-in memory-map [:instruction-pointer] (+ instruction-pointer amount)))
-;(+ instruction-pointer amount))
 
 
 (defn evaluate
@@ -54,18 +39,16 @@
    (let [op-code (get-op-code memory-map)]
      (cond
        (= op-code 99) memory-map
-       (= op-code 1) (recur {:memory (op-code-1 memory-map)
-                             :instruction-pointer (jump memory-map 4)})
-       (= op-code 2) (recur {:memory (op-code-2 memory-map)
-                             :instruction-pointer (jump memory-map 4)})
+       (= op-code 1) (recur (op-code-1 memory-map))
+       (= op-code 2) (recur (op-code-2 memory-map))
        ))))
 
 (defn evaluate-memory [memory noun verb] "Sets noun and verb then evaluates"
   (as-> {:memory memory} it
         (assoc-in it [:memory 1] noun)
         (assoc-in it [:memory 2] verb)
-        (:memory it)
-        (evaluate {:memory it :instruction-pointer 0})))
+        (assoc it :instruction-pointer 0)
+        (evaluate it)))
 
 
 (defn calculate-simple-result [file noun verb] "Star 1"

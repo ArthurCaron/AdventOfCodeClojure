@@ -1,6 +1,7 @@
 (ns exercises.adventofcode.d4
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]
+            [exercises.adventofcode.utils :as aoc-utils]
             [clojure.math.numeric-tower :as math]))
 
 
@@ -9,16 +10,6 @@
 
 (defn numbers->password-range [[password-min password-max]]
   (range password-min password-max))
-
-(defn number->digits
-  ([number]
-   (number->digits '() number))
-  ([result-seq number]
-   (if (<= number 0)
-     result-seq
-     (recur
-       (conj result-seq (rem number 10))
-       (quot number 10)))))
 
 (defn- filter-never-decrease-digits [digits]
   (reduce
@@ -69,7 +60,7 @@
   (as-> file it
         (file->numbers it)
         (numbers->password-range it)
-        (map number->digits it)
+        (map aoc-utils/number->digits it)
         (filter-never-decrease it)
         (filter-adjacent-identical 2 it)
         (count it)))
@@ -78,7 +69,7 @@
   (as-> file it
         (file->numbers it)
         (numbers->password-range it)
-        (map number->digits it)
+        (map aoc-utils/number->digits it)
         (filter-never-decrease it)
         (filter-adjacent-identical-only-two it)
         (count it)))

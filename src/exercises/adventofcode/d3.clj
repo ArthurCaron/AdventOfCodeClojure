@@ -72,7 +72,7 @@
           (:manhattan distance-result)
           (wire-distance-to-intersection wire intersection))))
     {:intersection intersection,
-     :manhattan 0}
+     :manhattan    0}
     wires))
 
 

@@ -19,6 +19,9 @@
 (defn- parse-str-to-int [str]
   (Integer/parseInt (re-find #"\d+" str)))
 
+(defn- cast-str-to-int [str]
+  (Integer/parseInt str))
+
 
 ; Day 1
 (defn day-1-input-from-file! [file-name]
@@ -31,8 +34,9 @@
 (defn day-2-input-from-file! [file-name]
   (as-> file-name it
         (slurp-file! it)
+        (str/trim-newline it)
         (split-by-comma it)
-        (map parse-str-to-int it)
+        (map cast-str-to-int it)
         (into [] it)))
 
 ; Day 3
@@ -55,14 +59,16 @@
 (defn day-4-input-from-file! [file-name]
   (as-> file-name it
         (slurp-file! it)
+        (str/trim-newline it)
         (split-by-dash it)
-        (map parse-str-to-int it)
+        (map cast-str-to-int it)
         (into [] it)))
 
 ; Day 5
 (defn day-5-input-from-file! [file-name]
   (as-> file-name it
         (slurp-file! it)
+        (str/trim-newline it)
         (split-by-comma it)
-        (map parse-str-to-int it)
+        (map cast-str-to-int it)
         (into [] it)))

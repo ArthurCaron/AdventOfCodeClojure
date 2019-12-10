@@ -106,7 +106,7 @@
   ([part]
    #(add-number-to-name part %1))
   ([part number]
-   { :name (str (:name part) "-" number) :size (:size part) }))
+   {:name (str (:name part) "-" number) :size (:size part)}))
 
 (defn do-fn-inc-number-of-times
   [f nb-times]
