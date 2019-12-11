@@ -28,4 +28,4 @@
 ; Day 5
 (defn validate-result-day5! [s1-result s2-result]
   (validate! s1-result 11933517)
-  (validate! s2-result 0))
+  (validate! s2-result 10428568))

@@ -1,57 +1,17 @@
 (ns exercises.adventofcode.d2
   (:require [exercises.adventofcode.io :as aoc-io]
-            [exercises.adventofcode.validation :as aoc-validation]))
+            [exercises.adventofcode.validation :as aoc-validation]
+            [exercises.adventofcode.intcode-computer :as intcode-computer]))
 
-(defn index->val [{memory :memory, instruction-pointer :instruction-pointer} index]
-  (nth memory (+ instruction-pointer index)))
-
-(defn index->index->val [{memory :memory, :as memory-map} index]
-  (nth memory (index->val memory-map index)))
-
-(defn assoc-val [memory-map position value]
-  (assoc-in memory-map [:memory position] value))
-
-(defn standard [fun memory-map] "Standard operation"
-  (assoc-val memory-map
-             (index->val memory-map 3)
-             (fun
-               (index->index->val memory-map 1)
-               (index->index->val memory-map 2))))
-
-
-(defn jump [amount {instruction-pointer :instruction-pointer, :as memory-map}]
-  (assoc-in memory-map [:instruction-pointer] (+ instruction-pointer amount)))
-
-
-(defn op-code-1 [memory-map]
-  (jump 4 (standard + memory-map)))
-
-(defn op-code-2 [memory-map]
-  (jump 4 (standard * memory-map)))
-
-
-(defn get-op-code [{memory :memory, instruction-pointer :instruction-pointer}]
-  (nth memory instruction-pointer))
-
-
-(defn evaluate
-  ([memory-map] "Finds op-code and iterates or stops"
-   (let [op-code (get-op-code memory-map)]
-     (cond
-       (= op-code 99) memory-map
-       (= op-code 1) (recur (op-code-1 memory-map))
-       (= op-code 2) (recur (op-code-2 memory-map))
-       ))))
-
-(defn evaluate-memory [memory noun verb] "Sets noun and verb then evaluates"
-  (as-> {:memory memory} it
+(defn evaluate-memory [memory noun verb]
+  (as-> (intcode-computer/get-empty-memory-map) it
+        (assoc-in it [:memory] memory)
         (assoc-in it [:memory 1] noun)
         (assoc-in it [:memory 2] verb)
-        (assoc it :instruction-pointer 0)
-        (evaluate it)))
+        (intcode-computer/evaluate it)))
 
 
-(defn calculate-simple-result [file noun verb] "Star 1"
+(defn calculate-simple-result [file noun verb]
   (let [memory (aoc-io/day-2-input-from-file! file)]
     (as-> (evaluate-memory memory noun verb) it
           (nth (:memory it) 0))))
@@ -75,7 +35,7 @@
                   (recur (inc noun) 0))
                 (recur noun (inc verb))))))))
 
-(defn calculate-complex-result [file expected] "Star 2"
+(defn calculate-complex-result [file expected]
   (let [result (deref (loop-on-noun-and-verb file expected))]
     (+ (* (:noun result) 100) (:verb result))))
 

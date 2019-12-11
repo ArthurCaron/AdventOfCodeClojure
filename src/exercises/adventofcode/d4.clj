@@ -1,8 +1,7 @@
 (ns exercises.adventofcode.d4
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]
-            [exercises.adventofcode.utils :as aoc-utils]
-            [clojure.math.numeric-tower :as math]))
+            [exercises.adventofcode.utils :as aoc-utils]))
 
 
 (defn file->numbers [file]
