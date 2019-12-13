@@ -2,6 +2,14 @@
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]))
 
+(defn day-1-input-from-file! [file-name]
+  (as-> file-name it
+        (aoc-io/slurp-file! it)
+        (aoc-io/split-by-line-return it)
+        (into [] it)))
+
+(def day-1-input (day-1-input-from-file! (aoc-io/day-file 1)))
+
 
 (defn calculate-fuel [mass]
   (as-> mass it
@@ -22,21 +30,20 @@
         (Integer/parseInt (re-find #"\A-?\d+" it))
         (fn it)))
 
-(defn calculate-result-with-fn [file fn]
-  (as-> file it
-        (aoc-io/day-1-input-from-file! it)
+(defn calculate-result-with-fn [input fn]
+  (as-> input it
         (map #(parse-string-to-int-and-apply %1 fn) it)
         (reduce + it)
         (int it)))
 
 
-(defn- evaluate-s1 [file]
-  (calculate-result-with-fn file calculate-fuel))
+(defn- evaluate-s1 [input]
+  (calculate-result-with-fn input calculate-fuel))
 
-(defn- evaluate-s2 [file]
-  (calculate-result-with-fn file calculate-fuel-recur))
+(defn- evaluate-s2 [input]
+  (calculate-result-with-fn input calculate-fuel-recur))
 
 
 (aoc-validation/validate-result-day1!
-  (evaluate-s1 (aoc-io/day-file 1))
-  (evaluate-s2 (aoc-io/day-file 1)))
+  (evaluate-s1 day-1-input)
+  (evaluate-s2 day-1-input))

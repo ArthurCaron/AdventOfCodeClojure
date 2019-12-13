@@ -2,6 +2,24 @@
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]))
 
+(defn parse [input]
+  {:direction (first input)
+   :amount    (aoc-io/parse-str-to-int input)})
+
+(defn parse-wire [wire]
+  (map parse wire))
+
+(defn day-3-input-from-file! [file-name]
+  (as-> file-name it
+        (aoc-io/slurp-file! it)
+        (aoc-io/split-by-line-return it)
+        (map aoc-io/split-by-comma it)
+        (map parse-wire it)
+        (into [] it)))
+
+(def day-3-input (day-3-input-from-file! (aoc-io/day-file 3)))
+
+
 (defn abs [n] (max n (- n)))
 (defn manhattan-distance [[x y]] (+ (abs x) (abs y)))
 
@@ -19,7 +37,7 @@
 (defn calc-new-result [result]
   (conj (:result result) (:last result)))
 
-(defn calc-points [direction previous-result -]
+(defn calc-points [direction previous-result _]
   (let [partial-calc-new-point (partial calc-new-point (move direction))]
     {:last   (partial-calc-new-point previous-result)
      :result (calc-new-result previous-result)}))
@@ -76,12 +94,8 @@
     wires))
 
 
-(defn file->wires [file]
-  (aoc-io/day-3-input-from-file! file))
-
-(defn- evaluate-s1 [file]
-  (as-> file it
-        (file->wires it)
+(defn- evaluate-s1 [wires]
+  (as-> wires it
         (map key-points-from-move-action it)
         (map set it)
         (get-intersections it)
@@ -89,9 +103,8 @@
         (find-lowest-distance it)
         (:manhattan it)))
 
-(defn- evaluate-s2 [file]
-  (let [wires (file->wires file)
-        key-points (map key-points-from-move-action wires)
+(defn- evaluate-s2 [wires]
+  (let [key-points (map key-points-from-move-action wires)
         intersections (get-intersections (map set key-points))
         partial-wires-distance-to-intersection (partial wires-distance-to-intersection key-points)]
     (as-> (map partial-wires-distance-to-intersection intersections) it
@@ -100,5 +113,5 @@
 
 
 (aoc-validation/validate-result-day3!
-  (evaluate-s1 (aoc-io/day-file 3))
-  (evaluate-s2 (aoc-io/day-file 3)))
+  (evaluate-s1 day-3-input)
+  (evaluate-s2 day-3-input))

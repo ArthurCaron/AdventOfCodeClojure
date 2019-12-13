@@ -1,11 +1,19 @@
 (ns exercises.adventofcode.day-4
-  (:require [exercises.adventofcode.io :as aoc-io]
+  (:require [clojure.string :as str]
+            [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]
             [exercises.adventofcode.utils :as aoc-utils]))
 
+(defn day-4-input-from-file! [file-name]
+  (as-> file-name it
+        (aoc-io/slurp-file! it)
+        (str/trim-newline it)
+        (aoc-io/split-by-dash it)
+        (map aoc-io/cast-str-to-int it)
+        (into [] it)))
 
-(defn file->numbers [file]
-  (aoc-io/day-4-input-from-file! file))
+(def day-4-input (day-4-input-from-file! (aoc-io/day-file 4)))
+
 
 (defn numbers->password-range [[password-min password-max]]
   (range password-min password-max))
@@ -55,18 +63,16 @@
   (filter (partial filter-adjacent-identical-digits-only-two) numbers))
 
 
-(defn evaluate-s1 [file]
-  (as-> file it
-        (file->numbers it)
+(defn evaluate-s1 [input]
+  (as-> input it
         (numbers->password-range it)
         (map aoc-utils/number->digits it)
         (filter-never-decrease it)
         (filter-adjacent-identical 2 it)
         (count it)))
 
-(defn- evaluate-s2 [file]
-  (as-> file it
-        (file->numbers it)
+(defn- evaluate-s2 [input]
+  (as-> input it
         (numbers->password-range it)
         (map aoc-utils/number->digits it)
         (filter-never-decrease it)
@@ -74,5 +80,5 @@
         (count it)))
 
 (aoc-validation/validate-result-day4!
-  (evaluate-s1 (aoc-io/day-file 4))
-  (evaluate-s2 (aoc-io/day-file 4)))
+  (evaluate-s1 day-4-input)
+  (evaluate-s2 day-4-input))
