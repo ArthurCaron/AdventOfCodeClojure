@@ -1,7 +1,7 @@
 (ns exercises.adventofcode.io
   (:require [clojure.string :as str]))
 
-(defn day-file [day] (str "src/exercises/adventofcode/d" day ".txt"))
+(defn day-file [day] (str "src/exercises/adventofcode/inputfiles/day-" day ".txt"))
 
 (defn- slurp-file! [file-name]
   (as-> file-name it
