@@ -1,5 +1,4 @@
-(ns exercises.adventofcode.intcode-computer
-  (:require [exercises.adventofcode.utils :as aoc-utils]))
+(ns exercises.adventofcode.intcode-computer)
 
 
 ; Helper
@@ -67,11 +66,6 @@
 
 
 ; Get op code and modes
-;(defn- get-to-expected-size [op-code expected-size]
-;  (let [digits (aoc-utils/number->digits op-code)
-;        remaining (- expected-size (count digits))]
-;    (apply conj digits (take remaining (repeat 0)))))
-
 (defn- get-to-expected-size [op-code expected-size]
   (let [remaining (- expected-size (count (str op-code)))]
     (str
