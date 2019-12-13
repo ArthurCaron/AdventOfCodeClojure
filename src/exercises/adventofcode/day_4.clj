@@ -5,12 +5,11 @@
             [exercises.adventofcode.utils :as aoc-utils]))
 
 (defn day-4-input-from-file! [file-name]
-  (as-> file-name it
-        (aoc-io/slurp-file! it)
-        (str/trim-newline it)
-        (aoc-io/split-by-dash it)
-        (map aoc-io/cast-str-to-int it)
-        (into [] it)))
+  (->> (aoc-io/slurp-file! file-name)
+       (str/trim-newline)
+       (aoc-io/split-by-dash)
+       (map aoc-io/cast-str-to-int)
+       (into [])))
 
 (def day-4-input (day-4-input-from-file! (aoc-io/day-file 4)))
 
@@ -64,20 +63,18 @@
 
 
 (defn evaluate-s1 [input]
-  (as-> input it
-        (numbers->password-range it)
-        (map aoc-utils/number->digits it)
-        (filter-never-decrease it)
-        (filter-adjacent-identical 2 it)
-        (count it)))
+  (->> (numbers->password-range input)
+       (map aoc-utils/number->digits)
+       (filter-never-decrease)
+       (filter-adjacent-identical 2)
+       (count)))
 
 (defn- evaluate-s2 [input]
-  (as-> input it
-        (numbers->password-range it)
-        (map aoc-utils/number->digits it)
-        (filter-never-decrease it)
-        (filter-adjacent-identical-only-two it)
-        (count it)))
+  (->> (numbers->password-range input)
+       (map aoc-utils/number->digits)
+       (filter-never-decrease)
+       (filter-adjacent-identical-only-two)
+       (count)))
 
 (aoc-validation/validate-result-day4!
   (evaluate-s1 day-4-input)

@@ -10,12 +10,11 @@
   (map parse wire))
 
 (defn day-3-input-from-file! [file-name]
-  (as-> file-name it
-        (aoc-io/slurp-file! it)
-        (aoc-io/split-by-line-return it)
-        (map aoc-io/split-by-comma it)
-        (map parse-wire it)
-        (into [] it)))
+  (->> (aoc-io/slurp-file! file-name)
+       (aoc-io/split-by-line-return)
+       (map aoc-io/split-by-comma)
+       (map parse-wire)
+       (into [])))
 
 (def day-3-input (day-3-input-from-file! (aoc-io/day-file 3)))
 
@@ -49,9 +48,9 @@
     (range amount)))
 
 (defn key-points-from-move-action [wire]
-  (as-> (reduce points-from-move-action {:last [0 0] :result []} wire) it
-        (calc-new-result it)
-        (rest it)))
+  (->> (reduce points-from-move-action {:last [0 0] :result []} wire)
+       (calc-new-result)
+       (rest)))
 
 (defn get-intersections [wires]
   (apply clojure.set/intersection wires))
@@ -65,10 +64,10 @@
 
 (defn find-lowest-distance [manhattan-intersections]
   (if (= (count manhattan-intersections) 1)
-    manhattan-intersections)
-  (reduce
-    (fn [val1 val2] (if (< (:manhattan val1) (:manhattan val2)) val1 val2))
-    manhattan-intersections))
+    manhattan-intersections
+    (reduce
+      (fn [val1 val2] (if (< (:manhattan val1) (:manhattan val2)) val1 val2))
+      manhattan-intersections)))
 
 
 (defn wire-distance-to-intersection [wire intersection]
@@ -95,21 +94,20 @@
 
 
 (defn- evaluate-s1 [wires]
-  (as-> wires it
-        (map key-points-from-move-action it)
-        (map set it)
-        (get-intersections it)
-        (intersection-to-manhattan it)
-        (find-lowest-distance it)
-        (:manhattan it)))
+  (->> (map key-points-from-move-action wires)
+       (map set)
+       (get-intersections)
+       (intersection-to-manhattan)
+       (find-lowest-distance)
+       (:manhattan)))
 
 (defn- evaluate-s2 [wires]
   (let [key-points (map key-points-from-move-action wires)
         intersections (get-intersections (map set key-points))
         partial-wires-distance-to-intersection (partial wires-distance-to-intersection key-points)]
-    (as-> (map partial-wires-distance-to-intersection intersections) it
-          (find-lowest-distance it)
-          (:manhattan it))))
+    (->> (map partial-wires-distance-to-intersection intersections)
+         (find-lowest-distance)
+         (:manhattan))))
 
 
 (aoc-validation/validate-result-day3!

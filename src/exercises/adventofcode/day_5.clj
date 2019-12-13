@@ -5,21 +5,20 @@
             [exercises.adventofcode.intcode-computer :as intcode-computer]))
 
 (defn day-5-input-from-file! [file-name]
-  (as-> file-name it
-        (aoc-io/slurp-file! it)
-        (str/trim-newline it)
-        (aoc-io/split-by-comma it)
-        (map aoc-io/cast-str-to-int it)
-        (into [] it)))
+  (->> (aoc-io/slurp-file! file-name)
+       (str/trim-newline)
+       (aoc-io/split-by-comma)
+       (map aoc-io/cast-str-to-int)
+       (into [])))
 
 (def day-5-input (day-5-input-from-file! (aoc-io/day-file 5)))
 
 
 (defn evaluate-result [memory input-val] "Star 1"
-  (as-> (intcode-computer/get-empty-memory-map) it
-        (assoc-in it [:memory] memory)
-        (assoc-in it [:input] input-val)
-        (intcode-computer/evaluate it)))
+  (-> (intcode-computer/get-empty-memory-map)
+      (assoc-in [:memory] memory)
+      (assoc-in [:input] input-val)
+      (intcode-computer/evaluate)))
 
 
 (defn evaluate-s1 [memory]

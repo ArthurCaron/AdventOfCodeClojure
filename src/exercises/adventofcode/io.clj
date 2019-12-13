@@ -4,8 +4,7 @@
 (defn day-file [day] (str "src/exercises/adventofcode/inputfiles/day-" day ".txt"))
 
 (defn slurp-file! [file-name]
-  (as-> file-name it
-        (slurp it)))
+  (slurp file-name))
 
 (defn split-by-line-return [str]
   (str/split str #"\n"))
@@ -15,6 +14,9 @@
 
 (defn split-by-dash [str]
   (str/split str #"-"))
+
+(defn split-by-parenthesis [str]
+  (str/split str #"\)"))
 
 (defn parse-str-to-int [str]
   (Integer/parseInt (re-find #"\d+" str)))
