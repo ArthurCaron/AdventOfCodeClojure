@@ -1,4 +1,4 @@
-(ns exercises.adventofcode.d5
+(ns exercises.adventofcode.day-5
   (:require [exercises.adventofcode.io :as aoc-io]
             [exercises.adventofcode.validation :as aoc-validation]
             [exercises.adventofcode.intcode-computer :as intcode-computer]))
