@@ -9,14 +9,14 @@
 (defn parse-wire [wire]
   (map parse wire))
 
-(defn day-3-input-from-file! [file-name]
+(defn input-from-file! [file-name]
   (->> (aoc-io/slurp-file! file-name)
        (aoc-io/split-by-line-return)
        (map aoc-io/split-by-comma)
        (map parse-wire)
        (into [])))
 
-(def day-3-input (day-3-input-from-file! (aoc-io/day-file 3)))
+(def input (input-from-file! (aoc-io/day-file 3)))
 
 
 (defn abs [n] (max n (- n)))
@@ -110,6 +110,5 @@
          (:manhattan))))
 
 
-(aoc-validation/validate-result-day3!
-  (evaluate-s1 day-3-input)
-  (evaluate-s2 day-3-input))
+(aoc-validation/validate-result :3 :s1 (evaluate-s1 input))
+(aoc-validation/validate-result :3 :s2 (evaluate-s2 input))

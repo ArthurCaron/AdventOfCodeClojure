@@ -1,36 +1,23 @@
 (ns exercises.adventofcode.validation)
 
+
+(def expected-results
+  {:1  {:s1 3442987 :s2 5161601}
+   :2  {:s1 4462686 :s2 5936}
+   :3  {:s1 2180 :s2 112316}
+   :4  {:s1 2150 :s2 1462}
+   :5  {:s1 11933517 :s2 10428568}
+   :6  {:s1 139597 :s2 286}
+   :7  {:s1 000 :s2 000}
+   :8  {:s1 000 :s2 000}
+   :9  {:s1 000 :s2 000}
+   :10 {:s1 000 :s2 000}})
+
+
 (defn validate! [result expected]
   (if (= result expected)
     (println "SUCCESS - CODE WORKS")
     (println "FAILURE - CODE DOESN'T WORK")))
 
-; Day 1
-(defn validate-result-day1! [s1-result s2-result]
-  (validate! s1-result 3442987)
-  (validate! s2-result 5161601))
-
-; Day 2
-(defn validate-result-day2! [s1-result s2-result]
-  (validate! s1-result 4462686)
-  (validate! s2-result 5936))
-
-; Day 3
-(defn validate-result-day3! [s1-result s2-result]
-  (validate! s1-result 2180)
-  (validate! s2-result 112316))
-
-; Day 4
-(defn validate-result-day4! [s1-result s2-result]
-  (validate! s1-result 2150)
-  (validate! s2-result 1462))
-
-; Day 5
-(defn validate-result-day5! [s1-result s2-result]
-  (validate! s1-result 11933517)
-  (validate! s2-result 10428568))
-
-; Day 6
-(defn validate-result-day6! [s1-result s2-result]
-  (validate! s1-result 139597)
-  (validate! s2-result 0))
+(defn validate-result [day-key star-key result]
+  (validate! result (star-key (day-key expected-results))))

@@ -4,14 +4,14 @@
             [exercises.adventofcode.validation :as aoc-validation]
             [exercises.adventofcode.utils :as aoc-utils]))
 
-(defn day-4-input-from-file! [file-name]
+(defn input-from-file! [file-name]
   (->> (aoc-io/slurp-file! file-name)
        (str/trim-newline)
        (aoc-io/split-by-dash)
        (map aoc-io/cast-str-to-int)
        (into [])))
 
-(def day-4-input (day-4-input-from-file! (aoc-io/day-file 4)))
+(def input (input-from-file! (aoc-io/day-file 4)))
 
 
 (defn numbers->password-range [[password-min password-max]]
@@ -76,6 +76,6 @@
        (filter-adjacent-identical-only-two)
        (count)))
 
-(aoc-validation/validate-result-day4!
-  (evaluate-s1 day-4-input)
-  (evaluate-s2 day-4-input))
+
+(aoc-validation/validate-result :4 :s1 (evaluate-s1 input))
+(aoc-validation/validate-result :4 :s2 (evaluate-s2 input))

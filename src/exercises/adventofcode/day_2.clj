@@ -4,14 +4,14 @@
             [exercises.adventofcode.validation :as aoc-validation]
             [exercises.adventofcode.intcode-computer :as intcode-computer]))
 
-(defn day-2-input-from-file! [file-name]
+(defn input-from-file! [file-name]
   (->> (aoc-io/slurp-file! file-name)
        (str/trim-newline)
        (aoc-io/split-by-comma)
        (map aoc-io/cast-str-to-int)
        (into [])))
 
-(def day-2-input (day-2-input-from-file! (aoc-io/day-file 2)))
+(def input (input-from-file! (aoc-io/day-file 2)))
 
 
 (defn evaluate-memory [memory noun verb]
@@ -54,7 +54,6 @@
 (defn evaluate-s2 [input]
   (calculate-complex-result input 19690720))
 
-(aoc-validation/validate-result-day2!
-  (evaluate-s1 day-2-input)
-  (evaluate-s2 day-2-input))
+(aoc-validation/validate-result :2 :s1 (evaluate-s1 input))
+(aoc-validation/validate-result :2 :s2 (evaluate-s2 input))
 
