@@ -36,18 +36,18 @@
 
 (defn evaluate-s1 [orbit-relationships]
   (let [get-orbited-fn (partial get orbit-relationships)
-        calculate-nb-orbits (partial list-orbits get-orbited-fn)]
+        compute-list-orbits (partial list-orbits get-orbited-fn)]
     (->> (keys orbit-relationships)
-         (map calculate-nb-orbits)
+         (map compute-list-orbits)
          (map count)
          (reduce +))))
 
 (defn evaluate-s2 [orbit-relationships]
   (let [get-orbited-fn (partial get orbit-relationships)
-        calculate-nb-orbits (partial list-orbits get-orbited-fn)]
+        compute-list-orbits (partial list-orbits get-orbited-fn)]
     (->> (keys orbit-relationships)
          (filter (fn [key] (or (= key "YOU") (= key "SAN"))))
-         (map calculate-nb-orbits)
+         (map compute-list-orbits)
          (map reverse)
          (apply count-differences))))
 
