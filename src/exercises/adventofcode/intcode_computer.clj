@@ -3,7 +3,7 @@
 
 ; Helper
 (defn get-empty-memory-map []
-  {:input [] :outputs [] :memory [] :instruction-pointer 0 :op-code-size 5})
+  {:inputs [] :outputs [] :memory [] :instruction-pointer 0 :op-code-size 5})
 
 
 ; Operations on memory-map
@@ -34,10 +34,15 @@
   (-> (assoc-in-memory memory-map (get-param :address 2) (fun (get-param :value 0) (get-param :value 1)))
       (jump 4)))
 
-(defn input [{input :input, :as memory-map} get-param]
-  (-> (assoc-in-memory memory-map (get-param :address 0) (first input))
-      (assoc-in [:input] (rest input))
-      (jump 2)))
+(defn input [{inputs :inputs, outputs :outputs, :as memory-map} get-param]
+  (let [first-input (first inputs)]
+    (-> (if (nil? first-input)
+          (do
+            (assoc-in-memory memory-map (get-param :address 0) (first outputs))
+              (assoc-in memory-map [:outputs] (into [] (rest outputs))))
+          (assoc-in-memory memory-map (get-param :address 0) first-input))
+        (assoc-in [:inputs] (into [] (rest inputs)))
+        (jump 2))))
 
 (defn output [memory-map get-param]
   (-> (update-in memory-map [:outputs] #(conj % (get-param :value 0)))
@@ -55,14 +60,14 @@
 
 (defn less-than [memory-map get-param]
   (-> (if (< (get-param :value 0) (get-param :value 1))
-         (assoc-in-memory memory-map (get-param :address 2) 1)
-         (assoc-in-memory memory-map (get-param :address 2) 0))
+        (assoc-in-memory memory-map (get-param :address 2) 1)
+        (assoc-in-memory memory-map (get-param :address 2) 0))
       (jump 4)))
 
 (defn equals [memory-map get-param]
   (-> (if (= (get-param :value 0) (get-param :value 1))
-         (assoc-in-memory memory-map (get-param :address 2) 1)
-         (assoc-in-memory memory-map (get-param :address 2) 0))
+        (assoc-in-memory memory-map (get-param :address 2) 1)
+        (assoc-in-memory memory-map (get-param :address 2) 0))
       (jump 4)))
 
 

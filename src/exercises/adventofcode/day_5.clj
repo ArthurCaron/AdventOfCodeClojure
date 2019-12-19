@@ -17,7 +17,7 @@
 (defn evaluate-result [memory input-val] "Star 1"
   (-> (intcode-computer/get-empty-memory-map)
       (assoc-in [:memory] memory)
-      (assoc-in [:input] input-val)
+      (assoc-in [:inputs] input-val)
       (intcode-computer/evaluate)))
 
 
