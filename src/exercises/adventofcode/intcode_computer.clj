@@ -3,7 +3,7 @@
 
 ; Helper
 (defn get-empty-memory-map []
-  {:input 0 :outputs [] :memory [] :instruction-pointer 0 :op-code-size 5})
+  {:input [] :outputs [] :memory [] :instruction-pointer 0 :op-code-size 5})
 
 
 ; Operations on memory-map
@@ -19,7 +19,7 @@
 (defn assoc-in-memory [memory-map position value]
   (assoc-in memory-map [:memory position] value))
 
-(defn jump [amount {instruction-pointer :instruction-pointer, :as memory-map}]
+(defn jump [{instruction-pointer :instruction-pointer, :as memory-map} amount]
   (assoc-in memory-map [:instruction-pointer] (+ instruction-pointer amount)))
 
 (defn- operation-mode->fn [mode key]
@@ -31,38 +31,39 @@
 
 ; Op Codes Operations
 (defn standard [fun memory-map get-param]
-  (->> (assoc-in-memory memory-map (get-param :address 2) (fun (get-param :value 0) (get-param :value 1)))
-       (jump 4)))
+  (-> (assoc-in-memory memory-map (get-param :address 2) (fun (get-param :value 0) (get-param :value 1)))
+      (jump 4)))
 
 (defn input [{input :input, :as memory-map} get-param]
-  (->> (assoc-in-memory memory-map (get-param :address 0) input)
-       (jump 2)))
+  (-> (assoc-in-memory memory-map (get-param :address 0) (first input))
+      (assoc-in [:input] (rest input))
+      (jump 2)))
 
 (defn output [memory-map get-param]
-  (->> (update-in memory-map [:outputs] #(conj % (get-param :value 0)))
-       (jump 2)))
+  (-> (update-in memory-map [:outputs] #(conj % (get-param :value 0)))
+      (jump 2)))
 
 (defn jump-if-true [memory-map get-param]
   (if (not= (get-param :value 0) 0)
     (assoc-in memory-map [:instruction-pointer] (get-param :value 1))
-    (jump 3 memory-map)))
+    (jump memory-map 3)))
 
 (defn jump-if-false [memory-map get-param]
   (if (= (get-param :value 0) 0)
     (assoc-in memory-map [:instruction-pointer] (get-param :value 1))
-    (jump 3 memory-map)))
+    (jump memory-map 3)))
 
 (defn less-than [memory-map get-param]
-  (->> (if (< (get-param :value 0) (get-param :value 1))
+  (-> (if (< (get-param :value 0) (get-param :value 1))
          (assoc-in-memory memory-map (get-param :address 2) 1)
          (assoc-in-memory memory-map (get-param :address 2) 0))
-       (jump 4)))
+      (jump 4)))
 
 (defn equals [memory-map get-param]
-  (->> (if (= (get-param :value 0) (get-param :value 1))
+  (-> (if (= (get-param :value 0) (get-param :value 1))
          (assoc-in-memory memory-map (get-param :address 2) 1)
          (assoc-in-memory memory-map (get-param :address 2) 0))
-       (jump 4)))
+      (jump 4)))
 
 
 ; Get op code and modes

@@ -22,10 +22,10 @@
 
 
 (defn evaluate-s1 [memory]
-  (last (:outputs (evaluate-result memory 1))))
+  (last (:outputs (evaluate-result memory [1]))))
 
 (defn evaluate-s2 [memory]
-  (last (:outputs (evaluate-result memory 5))))
+  (last (:outputs (evaluate-result memory [5]))))
 
 
 (aoc-validation/validate-result :5 :s1 (evaluate-s1 input))
