@@ -15,11 +15,19 @@
 (def input (input-from-file! (aoc-io/day-file 7)))
 
 
-(defn evaluate-result [memory input-val] "Star 1"
-  (-> (intcode-computer/get-empty-memory-map)
-      (assoc-in [:memory] memory)
-      (assoc-in [:inputs] input-val)
-      (intcode-computer/evaluate)))
+(defn evaluate-result [memory inputs] "Star 1"
+  (let [initial-state (-> (intcode-computer/get-empty-memory-map)
+                          (assoc-in [:memory] memory))]
+    (loop [memory initial-state]
+      (let [new-state (intcode-computer/evaluate memory)
+            stop-key (:stop-key new-state)
+            memory-map (:memory-map new-state)]
+        (cond
+          (= stop-key "end") memory-map
+          (= stop-key "input") (recur (assoc-in memory-map [:inputs] inputs))
+          (= stop-key "output") (recur memory-map)
+          )))))
+
 
 (defn loop-eval
   ([memories phase-settings] (loop-eval memories phase-settings 0))
@@ -50,12 +58,6 @@
   (->> (do-perms (range 0 5) (repeat 5 memory))
        (map :last-output)
        (apply max)))
-
-(defn permutations-combination [range1 range2]
-  (mapcat
-    (fn [starting-permutation]
-      (map #(into starting-permutation %) (combinatorics/permutations range2)))
-    (combinatorics/permutations range1)))
 
 (defn evaluate-s2 [memory]
   (let [first-result (do-perms (range 0 5) (repeat 5 memory))]

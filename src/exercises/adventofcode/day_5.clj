@@ -17,27 +17,22 @@
 (defn evaluate-result [memory input-val] "Star 1"
   (let [initial-state (-> (intcode-computer/get-empty-memory-map)
                           (assoc-in [:memory] memory))]
-    (loop [memory initial-state
-           outputs []]
+    (loop [memory initial-state]
       (let [new-state (intcode-computer/evaluate memory)
             stop-key (:stop-key new-state)
             memory-map (:memory-map new-state)]
         (cond
-          (= stop-key "end") outputs
-          (= stop-key "input") (recur
-                                 (assoc-in memory-map [:inputs] input-val)
-                                 outputs)
-          (= stop-key "output") (recur
-                                  (assoc-in memory-map [:output] [])
-                                  (into outputs (:output memory-map)))
+          (= stop-key "end") memory-map
+          (= stop-key "input") (recur (assoc-in memory-map [:inputs] input-val))
+          (= stop-key "output") (recur memory-map)
           )))))
 
 
 (defn evaluate-s1 [input]
-  (first (drop-while zero? (evaluate-result input [1]))))
+  (first (drop-while zero? (:outputs (evaluate-result input [1])))))
 
 (defn evaluate-s2 [input]
-  (first (drop-while zero? (evaluate-result input [5]))))
+  (first (drop-while zero? (:outputs (evaluate-result input [5])))))
 
 
 (aoc-validation/validate-result :5 :s1 (evaluate-s1 input))

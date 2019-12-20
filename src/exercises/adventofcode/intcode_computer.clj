@@ -3,7 +3,7 @@
 
 ; Helper
 (defn get-empty-memory-map []
-  {:inputs [] :output [] :memory [] :instruction-pointer 0 :op-code-size 5})
+  {:inputs [] :outputs [] :memory [] :instruction-pointer 0 :op-code-size 5})
 
 
 ; Operations on memory-map
@@ -40,7 +40,7 @@
       (jump 2)))
 
 (defn output [memory-map get-param]
-  (-> (update-in memory-map [:output] #(conj % (get-param :value 0)))
+  (-> (update-in memory-map [:outputs] #(conj % (get-param :value 0)))
       (jump 2)))
 
 (defn jump-if-true [memory-map get-param]
