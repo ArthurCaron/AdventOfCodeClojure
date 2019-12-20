@@ -15,7 +15,6 @@
 (def input (input-from-file! (aoc-io/day-file 7)))
 
 
-
 (defn evaluate-result [memory input-val] "Star 1"
   (-> (intcode-computer/get-empty-memory-map)
       (assoc-in [:memory] memory)
@@ -45,6 +44,7 @@
            (conj evaluations)))
     []
     (combinatorics/permutations range)))
+
 
 (defn evaluate-s1 [memory]
   (->> (do-perms (range 0 5) (repeat 5 memory))

@@ -18,13 +18,11 @@
 
 
 (defn list-orbits
-  ([get-orbited-fn orbiter]
-   (list-orbits get-orbited-fn orbiter []))
-  ([get-orbited-fn orbiter result]
+  [get-orbited-fn result orbiter]
    (let [orbited (get-orbited-fn orbiter)]
      (if (= orbited "COM")
        (conj result orbited)
-       (recur get-orbited-fn orbited (conj result orbited))))))
+       (recur get-orbited-fn (conj result orbited) orbited))))
 
 (defn count-differences
   [coll1 coll2]
@@ -36,7 +34,7 @@
 
 (defn evaluate-s1 [orbit-relationships]
   (let [get-orbited-fn (partial get orbit-relationships)
-        compute-list-orbits (partial list-orbits get-orbited-fn)]
+        compute-list-orbits (partial list-orbits get-orbited-fn [])]
     (->> (keys orbit-relationships)
          (map compute-list-orbits)
          (map count)
@@ -44,9 +42,9 @@
 
 (defn evaluate-s2 [orbit-relationships]
   (let [get-orbited-fn (partial get orbit-relationships)
-        compute-list-orbits (partial list-orbits get-orbited-fn)]
+        compute-list-orbits (partial list-orbits get-orbited-fn [])]
     (->> (keys orbit-relationships)
-         (filter (fn [key] (or (= key "YOU") (= key "SAN"))))
+         (filter #{"YOU" "SAN"})
          (map compute-list-orbits)
          (map reverse)
          (apply count-differences))))

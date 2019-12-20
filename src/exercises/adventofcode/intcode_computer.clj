@@ -3,7 +3,7 @@
 
 ; Helper
 (defn get-empty-memory-map []
-  {:inputs [] :outputs [] :memory [] :instruction-pointer 0 :op-code-size 5})
+  {:inputs [] :output [] :memory [] :instruction-pointer 0 :op-code-size 5})
 
 
 ; Operations on memory-map
@@ -34,18 +34,13 @@
   (-> (assoc-in-memory memory-map (get-param :address 2) (fun (get-param :value 0) (get-param :value 1)))
       (jump 4)))
 
-(defn input [{inputs :inputs, outputs :outputs, :as memory-map} get-param]
-  (let [first-input (first inputs)]
-    (-> (if (nil? first-input)
-          (do
-            (assoc-in-memory memory-map (get-param :address 0) (first outputs))
-              (assoc-in memory-map [:outputs] (into [] (rest outputs))))
-          (assoc-in-memory memory-map (get-param :address 0) first-input))
-        (assoc-in [:inputs] (into [] (rest inputs)))
-        (jump 2))))
+(defn input [{inputs :inputs, :as memory-map} get-param]
+  (-> (assoc-in-memory memory-map (get-param :address 0) (first inputs))
+      (assoc-in [:inputs] (into [] (rest inputs)))
+      (jump 2)))
 
 (defn output [memory-map get-param]
-  (-> (update-in memory-map [:outputs] #(conj % (get-param :value 0)))
+  (-> (update-in memory-map [:output] #(conj % (get-param :value 0)))
       (jump 2)))
 
 (defn jump-if-true [memory-map get-param]
@@ -106,11 +101,13 @@
          is-operation-code? (partial = (:operation-code op-code))
          get-param (partial operation-modes->value op-code memory-map)]
      (cond
-       (is-operation-code? "99") memory-map
+       (is-operation-code? "99") {:stop-key "end" :memory-map memory-map}
        (is-operation-code? "01") (recur (standard + memory-map get-param))
        (is-operation-code? "02") (recur (standard * memory-map get-param))
-       (is-operation-code? "03") (recur (input memory-map get-param))
-       (is-operation-code? "04") (recur (output memory-map get-param))
+       (is-operation-code? "03") (if (empty? (:inputs memory-map))
+                                   {:stop-key "input" :memory-map memory-map}
+                                   (recur (input memory-map get-param)))
+       (is-operation-code? "04") {:stop-key "output" :memory-map (output memory-map get-param)}
        (is-operation-code? "05") (recur (jump-if-true memory-map get-param))
        (is-operation-code? "06") (recur (jump-if-false memory-map get-param))
        (is-operation-code? "07") (recur (less-than memory-map get-param))

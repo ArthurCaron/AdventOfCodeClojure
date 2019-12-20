@@ -19,7 +19,8 @@
       (assoc-in [:memory] memory)
       (assoc-in [:memory 1] noun)
       (assoc-in [:memory 2] verb)
-      (intcode-computer/evaluate)))
+      (intcode-computer/evaluate)
+      (:memory-map)))
 
 
 (defn calculate-simple-result [memory noun verb]
